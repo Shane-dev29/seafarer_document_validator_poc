@@ -60,7 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(info => {
         const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         const wsHost = window.location.hostname || "127.0.0.1";
-        const wsUrl = `${wsProtocol}//${wsHost}:8001/screencast`;
+        const wsPort = info.ws_port || 8001;
+        const wsUrl = `${wsProtocol}//${wsHost}:${wsPort}/screencast`;
         wsScreencast = new WebSocket(wsUrl);
 
         wsScreencast.onopen = () => {

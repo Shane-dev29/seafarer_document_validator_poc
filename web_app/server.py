@@ -41,12 +41,14 @@ class MaritimeAIRequestHandler(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
+            ext_ws_port = int(os.environ.get("EXTERNAL_WS_PORT", os.environ.get("WS_PORT", WS_PORT)))
             data = {
                 "status": "online",
                 "local_model": LLM_MODEL,
                 "local_url": LLM_URL,
                 "gemini_available": bool(GEMINI_API_KEY),
-                "screencast_ws": f"ws://127.0.0.1:{WS_PORT}/screencast"
+                "ws_port": ext_ws_port,
+                "screencast_ws": f"ws://127.0.0.1:{ext_ws_port}/screencast"
             }
             self.wfile.write(json.dumps(data).encode("utf-8"))
             return

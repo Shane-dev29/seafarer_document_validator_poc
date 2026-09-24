@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  seafarer-verifier:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: seafarer_verifier_app
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    env_file:
+      - .env
+    environment:
+      - HTTP_HOST=0.0.0.0
+      - WS_HOST=0.0.0.0
+    volumes:
+      - ./verified_reports:/app/verified_reports
+      - ./incoming_docs:/app/incoming_docs
+      - ./processed_docs:/app/processed_docs
+      - ./web_app/uploads:/app/web_app/uploads
+    restart: unless-stopped

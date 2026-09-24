@@ -376,8 +376,9 @@ async def _ws_router(websocket):
 def _start_ws_server(ws_port: int = WS_PORT):
     """Start the WebSocket server in its own asyncio event loop (daemon thread)."""
     async def _serve():
-        async with websockets.serve(_ws_router, "127.0.0.1", ws_port):
-            print(f"[Screencast WS] Server live at ws://127.0.0.1:{ws_port}")
+        host = os.environ.get("WS_HOST", "0.0.0.0")
+        async with websockets.serve(_ws_router, host, ws_port):
+            print(f"[Screencast WS] Server live at ws://{host}:{ws_port}")
             await asyncio.Future()   # run forever
 
     loop = asyncio.new_event_loop()
@@ -390,15 +391,16 @@ def _start_ws_server(ws_port: int = WS_PORT):
 # ---------------------------------------------------------------------------
 
 def run_server(port: int = 8000):
+    host = os.environ.get("HTTP_HOST", "0.0.0.0")
     # Start WebSocket server in background daemon thread
     ws_thread = threading.Thread(target=_start_ws_server, daemon=True)
     ws_thread.start()
 
-    server = ThreadingHTTPServer(("127.0.0.1", port), MaritimeAIRequestHandler)
+    server = ThreadingHTTPServer((host, port), MaritimeAIRequestHandler)
     print("\n" + "=" * 60)
-    print("  LOCAL MARITIME AI STUDIO WEB INTERFACE LIVE!")
-    print(f"  HTTP  : http://127.0.0.1:{port}")
-    print(f"  WS    : ws://127.0.0.1:{WS_PORT}/screencast  (Live Browser Stream)")
+    print("  MARITIME AI STUDIO WEB INTERFACE LIVE!")
+    print(f"  HTTP  : http://{host}:{port}")
+    print(f"  WS    : ws://{host}:{WS_PORT}/screencast  (Live Browser Stream)")
     print("=" * 60 + "\n")
     try:
         server.serve_forever()

@@ -54,11 +54,13 @@ document.addEventListener("DOMContentLoaded", () => {
     wsStatus.textContent = "⬤ Connecting...";
     wsStatus.className = "ws-status ws-connecting";
 
-    // Get WS URL from health endpoint
+    // Get WS URL from health endpoint or fallback to current host
     fetch("/api/health")
       .then(r => r.json())
       .then(info => {
-        const wsUrl = info.screencast_ws || "ws://127.0.0.1:8001/screencast";
+        const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+        const wsHost = window.location.hostname || "127.0.0.1";
+        const wsUrl = `${wsProtocol}//${wsHost}:8001/screencast`;
         wsScreencast = new WebSocket(wsUrl);
 
         wsScreencast.onopen = () => {

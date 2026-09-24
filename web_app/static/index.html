@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Maritime Credential Verification Studio - Autonomous Verification via LangGraph, Local AI, and Frontier Vision">
+  <title>Maritime AI Studio | Autonomous Verification & Intelligence</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation & Mode Selector -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Maritime AI</h1>
+          <span>Autonomous Studio v2.0</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs">
+        <button id="tabVerifyBtn" class="nav-tab active">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Verification Studio
+        </button>
+        <button id="tabBrowserBtn" class="nav-tab">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+          Live Browser
+        </button>
+        <button id="tabChatBtn" class="nav-tab">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          </svg>
+          AI Intelligence Chat
+        </button>
+      </nav>
+
+      <!-- Model Selector -->
+      <div class="sidebar-section">
+        <label for="modelSelect">Intelligence Engine</label>
+        <select id="modelSelect" class="select-custom">
+          <option value="local" selected>AI_Local (In-House Private Model)</option>
+          <option value="gemini">Google Gemini 3.6 Flash (Frontier)</option>
+        </select>
+      </div>
+
+      <!-- Live Pipeline Stats -->
+      <div class="sidebar-section pipeline-stats">
+        <label>Active Verifiers</label>
+        <div class="badge-list">
+          <span class="country-pill pill-india">🇮🇳 India (DG Shipping)</span>
+          <span class="country-pill pill-myanmar">🇲🇲 Myanmar (DMAOS AIO)</span>
+          <span class="country-pill pill-indonesia">🇮🇩 Indonesia (Dephub)</span>
+        </div>
+      </div>
+
+      <!-- System Status -->
+      <div class="sidebar-footer">
+        <div class="status-indicator">
+          <div class="pulse-dot"></div>
+          <span>LangGraph Engine: <strong>Active</strong></span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-stage">
+      
+      <!-- TAB 1: VERIFICATION STUDIO -->
+      <section id="verifySection" class="stage-section active">
+        <header class="section-header">
+          <div>
+            <h2>Autonomous Seafarer Verification</h2>
+            <p class="subtitle">Upload document folders or PDF/JPG files for automated LangGraph extraction and browser verification.</p>
+          </div>
+        </header>
+
+        <div class="verify-grid">
+          
+          <!-- Ingestion & Upload Card -->
+          <div class="card upload-card">
+            <h3>1. Document Ingestion</h3>
+            
+            <div class="dropzone" id="dropzone">
+              <input type="file" id="batchFileInput" multiple accept=".pdf,.png,.jpg,.jpeg" style="display: none;">
+              <div class="dropzone-icon">
+                <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                </svg>
+              </div>
+              <p class="dropzone-main">Drag & drop seafarer files (PDF, JPG, COC, CDC)</p>
+              <p class="dropzone-sub">or <button type="button" class="btn-link" id="btnBrowseFiles">browse files</button></p>
+            </div>
+
+            <div class="file-list-preview" id="fileListPreview"></div>
+
+            <button id="btnRunVerification" class="btn-primary btn-block" disabled>
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Execute LangGraph Verification
+            </button>
+          </div>
+
+          <!-- Live Stepper Progress -->
+          <div class="card stepper-card">
+            <h3>2. Live State Machine Progress</h3>
+            
+            <div class="stepper" id="stepper">
+              <div class="step-item" id="step1">
+                <div class="step-circle">1</div>
+                <div class="step-content">
+                  <h4>Document Ingestion & Fast OCR</h4>
+                  <p>Extracting text (Fast-Fail policy: no retry stall)</p>
+                </div>
+              </div>
+
+              <div class="step-item" id="step2">
+                <div class="step-circle">2</div>
+                <div class="step-content">
+                  <h4>Local AI Entity Synthesis</h4>
+                  <p>In-House model extracts COC, CDC, Name, DOB</p>
+                </div>
+              </div>
+
+              <div class="step-item" id="step3">
+                <div class="step-circle">3</div>
+                <div class="step-content">
+                  <h4>National Maritime Portal Lookup</h4>
+                  <p>Resolves official authority from master IMO database</p>
+                </div>
+              </div>
+
+              <div class="step-item" id="step4">
+                <div class="step-circle">4</div>
+                <div class="step-content">
+                  <h4>Playwright Browser Automation</h4>
+                  <p>Automates live portal, uploads file & solves CAPTCHA</p>
+                </div>
+              </div>
+
+              <div class="step-item" id="step5">
+                <div class="step-circle">5</div>
+                <div class="step-content">
+                  <h4>Audit Report & Verification Certificate</h4>
+                  <p>Structured JSON generated & screenshot captured</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Verification Results & Document Matrix -->
+        <div class="results-container" id="resultsContainer" style="display: none;">
+          
+          <div class="results-header">
+            <h3>Verification Result Summary</h3>
+            <span class="status-badge" id="resultStatusBadge">VERIFIED</span>
+          </div>
+
+          <!-- Document Ingestion Matrix -->
+          <div class="card matrix-card">
+            <h4>📄 Ingested Document Status Matrix</h4>
+            <div class="table-responsive">
+              <table class="data-table" id="docMatrixTable">
+                <thead>
+                  <tr>
+                    <th>Filename</th>
+                    <th>Doc Type</th>
+                    <th>OCR Status</th>
+                    <th>Details / Error</th>
+                  </tr>
+                </thead>
+                <tbody id="docMatrixBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Profile & Records -->
+          <div class="results-grid">
+            <div class="card profile-card">
+              <h4>👤 Seafarer Profile Extracted</h4>
+              <div class="profile-details" id="profileDetails"></div>
+            </div>
+
+            <div class="card screenshot-card">
+              <h4>📸 Official Portal Screenshot</h4>
+              <div class="screenshot-container">
+                <img id="resultScreenshotImg" src="" alt="Live portal verification screenshot">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- TAB 2: LIVE BROWSER VIEW -->
+      <section id="browserSection" class="stage-section">
+        <header class="section-header">
+          <div>
+            <h2>Live Playwright Browser</h2>
+            <p class="subtitle">Real-time window into the automated browser filling and submitting the national verification portal.</p>
+          </div>
+          <div class="live-badge-header" id="liveBadgeHeader" style="display:none">
+            <span class="live-badge">● LIVE</span>
+          </div>
+        </header>
+
+        <!-- Fake browser chrome frame -->
+        <div class="browser-chrome" id="browserChrome">
+          <!-- Title bar -->
+          <div class="browser-titlebar">
+            <div class="browser-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <div class="browser-urlbar">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right:6px;flex-shrink:0;opacity:0.6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+              </svg>
+              <span id="browserUrlText">Waiting for verification to start...</span>
+            </div>
+            <div class="browser-controls">
+              <span id="browserFrameCounter" class="frame-counter">0 frames</span>
+            </div>
+          </div>
+
+          <!-- Viewport -->
+          <div class="browser-viewport" id="browserViewport">
+            <!-- Idle state -->
+            <div class="browser-idle" id="browserIdle">
+              <div class="idle-icon">
+                <svg width="56" height="56" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24" style="opacity:0.25">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <p class="idle-label">Waiting for verification to start...</p>
+              <p class="idle-sub">Upload documents and click Execute to watch the browser automation live</p>
+            </div>
+            <!-- Live frame -->
+            <img id="liveFrame" src="" alt="Live browser stream" style="display:none; width:100%; height:100%; object-fit:contain;">
+          </div>
+
+          <!-- Status bar -->
+          <div class="browser-statusbar">
+            <div class="status-left">
+              <span class="status-dot" id="statusDot"></span>
+              <span id="actionLabel">Idle</span>
+            </div>
+            <div class="status-right">
+              <span id="wsStatus" class="ws-status ws-connecting">⬤ Connecting...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Replay Scrubber (shown after verification completes) -->
+        <div class="replay-panel" id="replayPanel" style="display:none;">
+          <div class="replay-header">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>Session Replay</span>
+            <span id="replayFrameLabel" class="replay-label"></span>
+          </div>
+          <div class="replay-controls">
+            <button class="replay-btn" id="replayFirst" title="First frame">⏮</button>
+            <button class="replay-btn" id="replayPrev" title="Previous">⏪</button>
+            <input type="range" id="replayScrubber" min="0" value="0" class="scrubber">
+            <button class="replay-btn" id="replayNext" title="Next">⏩</button>
+            <button class="replay-btn" id="replayLast" title="Last frame">⏭</button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TAB 2: CHAT STUDIO -->
+      <section id="chatSection" class="stage-section">
+        <header class="section-header">
+          <div>
+            <h2>Maritime Intelligence Chat</h2>
+            <p class="subtitle">Direct terminal to In-House Local Model and Frontier Gemini Multimodal AI.</p>
+          </div>
+        </header>
+
+        <div class="chat-wrapper">
+          <section class="chat-messages" id="chatMessages">
+            <article class="message assistant">
+              <div class="avatar">AI</div>
+              <div class="bubble">
+                <p><strong>Welcome to Maritime AI Studio!</strong> 👋</p>
+                <p>You can ask questions, paste certificate data, or attach screenshots to analyze verification portals.</p>
+              </div>
+            </article>
+          </section>
+
+          <footer class="input-container">
+            <div class="attachment-preview-bar" id="attachmentPreview" style="display: none;">
+              <img id="previewImg" class="preview-thumb" src="" alt="Thumbnail">
+              <span id="previewFilename" class="preview-name">file.png</span>
+              <button id="btnRemoveAttachment" class="btn-remove-attachment" title="Remove">✕</button>
+            </div>
+
+            <form id="chatForm" class="input-box" onsubmit="event.preventDefault();">
+              <input type="file" id="chatFileInput" accept="image/*,application/pdf" style="display: none;">
+              <button type="button" id="btnAttach" class="action-btn btn-attach" title="Attach image">📎</button>
+              <input type="text" id="userPromptInput" class="chat-input" placeholder="Type message to AI_Local..." autocomplete="off">
+              <button type="submit" id="btnSend" class="action-btn btn-send" title="Send">➤</button>
+            </form>
+          </footer>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
